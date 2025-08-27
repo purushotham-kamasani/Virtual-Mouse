@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 import pyautogui
 import numpy as np
-import time
+import datetime
 
 # Initialize Mediapipe Hands and Drawing utilities
 mp_hands = mp.solutions.hands
