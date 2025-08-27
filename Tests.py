@@ -1,3 +1,4 @@
+import math
 import pytest
 from exampple import calculate_distance, map_coordinates, detect_gestures
 
