@@ -1,0 +1,48 @@
+[project]
+name = "virtual-mouse"
+version = "0.2.0"
+description = "Hands-free mouse control via webcam — real-time hand tracking with MediaPipe, gesture-based click/scroll/drag"
+authors = [{ name = "Purushotham Kamasani" }]
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+dependencies = [
+    "opencv-python>=4.9.0",
+    "mediapipe>=0.10.11",
+    "pyautogui>=0.9.54",
+    "numpy>=1.26.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.3.0",
+    "pre-commit>=3.6.0",
+]
+
+[project.scripts]
+virtual-mouse = "app.main:main"
+
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["E501", "B008", "UP042"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short --cov=app --cov-report=term-missing"
+
+[tool.coverage.run]
+omit = ["*/tests/*", "app/main.py"]

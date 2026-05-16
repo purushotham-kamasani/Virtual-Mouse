@@ -1,0 +1,146 @@
+<svg viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #f4f6f8; }
+      .lane { fill: #ffffff; stroke: #d0d7de; stroke-width: 1; }
+      .lane-label { fill: #57606a; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+      .box { fill: #ffffff; stroke: #156166; stroke-width: 1.5; rx: 6; }
+      .box-accent { fill: #156166; stroke: #156166; }
+      .box-secondary { fill: #ffffff; stroke: #4a9499; stroke-width: 1; }
+      .box-soft { fill: #e8ecef; stroke: #c0c9d1; stroke-width: 1; }
+      .box-text { fill: #0f1419; font-size: 13px; font-weight: 500; }
+      .box-text-light { fill: #ffffff; font-size: 13px; font-weight: 500; }
+      .box-sub { fill: #57606a; font-size: 10px; font-family: 'JetBrains Mono', 'Menlo', monospace; }
+      .box-sub-light { fill: #d0d7de; font-size: 10px; font-family: 'JetBrains Mono', 'Menlo', monospace; }
+      .title { fill: #0f1419; font-size: 18px; font-weight: 600; }
+      .subtitle { fill: #57606a; font-size: 12px; }
+      .arrow { stroke: #156166; stroke-width: 1.5; fill: none; }
+      .arrow-dashed { stroke: #8a96a3; stroke-width: 1.2; fill: none; stroke-dasharray: 4,3; }
+      .arrow-text { fill: #57606a; font-size: 10px; font-family: 'JetBrains Mono', monospace; }
+      .arrow-text-strong { fill: #156166; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#156166" />
+    </marker>
+    <marker id="arrowhead-dashed" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#8a96a3" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="720" class="bg" />
+
+  <text x="40" y="40" class="title">Virtual Mouse — Architecture</text>
+  <text x="40" y="60" class="subtitle">Per-frame pipeline · MediaPipe hand tracking · gesture detection · debounced state machine · mouse driver</text>
+
+  <!-- Input lane -->
+  <rect x="40" y="90" width="1120" height="120" class="lane" />
+  <text x="55" y="110" class="lane-label">01 · Capture</text>
+
+  <rect x="80" y="135" width="200" height="60" class="box" />
+  <text x="180" y="158" text-anchor="middle" class="box-text">Webcam (OpenCV)</text>
+  <text x="180" y="178" text-anchor="middle" class="box-sub">cv2.VideoCapture · 30 fps</text>
+
+  <rect x="320" y="135" width="200" height="60" class="box" />
+  <text x="420" y="158" text-anchor="middle" class="box-text">Frame Mirror + RGB</text>
+  <text x="420" y="178" text-anchor="middle" class="box-sub">flip · BGR → RGB</text>
+
+  <rect x="560" y="135" width="200" height="60" class="box-accent" />
+  <text x="660" y="158" text-anchor="middle" class="box-text-light">HandTracker</text>
+  <text x="660" y="178" text-anchor="middle" class="box-sub-light">MediaPipe Hands</text>
+
+  <rect x="800" y="135" width="240" height="60" class="box-secondary" />
+  <text x="920" y="158" text-anchor="middle" class="box-text">HandLandmarks (pixel space)</text>
+  <text x="920" y="178" text-anchor="middle" class="box-sub">wrist · thumb · index · middle</text>
+
+  <line x1="280" y1="165" x2="320" y2="165" class="arrow" marker-end="url(#arrowhead)" />
+  <line x1="520" y1="165" x2="560" y2="165" class="arrow" marker-end="url(#arrowhead)" />
+  <line x1="760" y1="165" x2="800" y2="165" class="arrow" marker-end="url(#arrowhead)" />
+
+  <!-- Detection lane -->
+  <rect x="40" y="225" width="1120" height="160" class="lane" />
+  <text x="55" y="245" class="lane-label">02 · Detection (pure logic)</text>
+
+  <rect x="80" y="270" width="240" height="95" class="box" />
+  <text x="200" y="295" text-anchor="middle" class="box-text">detect_gesture()</text>
+  <text x="200" y="313" text-anchor="middle" class="box-sub">priority decision</text>
+  <line x1="95" y1="325" x2="305" y2="325" stroke="#d0d7de" stroke-width="0.5" />
+  <text x="200" y="343" text-anchor="middle" class="box-sub">d(index, thumb)  → click</text>
+  <text x="200" y="358" text-anchor="middle" class="box-sub">d(index, middle) → right</text>
+
+  <rect x="360" y="270" width="220" height="95" class="box-soft" />
+  <text x="470" y="295" text-anchor="middle" class="box-text">GestureReading</text>
+  <text x="470" y="315" text-anchor="middle" class="box-sub">gesture: enum</text>
+  <text x="470" y="330" text-anchor="middle" class="box-sub">distances (debug HUD)</text>
+  <text x="470" y="345" text-anchor="middle" class="box-sub">wrist_y</text>
+
+  <rect x="620" y="270" width="240" height="95" class="box-accent" />
+  <text x="740" y="295" text-anchor="middle" class="box-text-light">GestureStateMachine</text>
+  <text x="740" y="313" text-anchor="middle" class="box-sub-light">edge-triggered debounce</text>
+  <line x1="635" y1="325" x2="845" y2="325" stroke="#4a9499" stroke-width="0.5" />
+  <text x="740" y="343" text-anchor="middle" class="box-sub-light">held pinch = 1 click</text>
+  <text x="740" y="358" text-anchor="middle" class="box-sub-light">click cooldown · scroll rate</text>
+
+  <rect x="900" y="270" width="200" height="95" class="box-soft" />
+  <text x="1000" y="295" text-anchor="middle" class="box-text">Action</text>
+  <text x="1000" y="313" text-anchor="middle" class="box-sub">type: enum</text>
+  <line x1="915" y1="325" x2="1085" y2="325" stroke="#c0c9d1" stroke-width="0.5" />
+  <text x="1000" y="343" text-anchor="middle" class="box-sub">MOVE / CLICK / R-CLICK</text>
+  <text x="1000" y="358" text-anchor="middle" class="box-sub">SCROLL_UP / SCROLL_DOWN</text>
+
+  <line x1="320" y1="315" x2="360" y2="315" class="arrow" marker-end="url(#arrowhead)" />
+  <line x1="580" y1="315" x2="620" y2="315" class="arrow" marker-end="url(#arrowhead)" />
+  <line x1="860" y1="315" x2="900" y2="315" class="arrow" marker-end="url(#arrowhead)" />
+
+  <!-- Engine lane -->
+  <rect x="40" y="400" width="1120" height="120" class="lane" />
+  <text x="55" y="420" class="lane-label">03 · Output</text>
+
+  <rect x="80" y="445" width="240" height="60" class="box" />
+  <text x="200" y="468" text-anchor="middle" class="box-text">map_to_screen()</text>
+  <text x="200" y="488" text-anchor="middle" class="box-sub">frame px → screen px (clip)</text>
+
+  <rect x="360" y="445" width="200" height="60" class="box" />
+  <text x="460" y="468" text-anchor="middle" class="box-text">smooth()</text>
+  <text x="460" y="488" text-anchor="middle" class="box-sub">exponential filter · factor 0.3</text>
+
+  <rect x="600" y="445" width="260" height="60" class="box-secondary" />
+  <text x="730" y="468" text-anchor="middle" class="box-text">MouseController (abstract)</text>
+  <text x="730" y="488" text-anchor="middle" class="box-sub">move · click · right_click · scroll</text>
+
+  <rect x="900" y="445" width="200" height="60" class="box-accent" />
+  <text x="1000" y="468" text-anchor="middle" class="box-text-light">PyAutoGUIMouse</text>
+  <text x="1000" y="488" text-anchor="middle" class="box-sub-light">OS-level cursor + scroll</text>
+
+  <line x1="320" y1="475" x2="360" y2="475" class="arrow" marker-end="url(#arrowhead)" />
+  <line x1="560" y1="475" x2="600" y2="475" class="arrow" marker-end="url(#arrowhead)" />
+  <line x1="860" y1="475" x2="900" y2="475" class="arrow" marker-end="url(#arrowhead)" />
+
+  <!-- Test injection arrow -->
+  <rect x="600" y="540" width="260" height="50" class="box-soft" />
+  <text x="730" y="563" text-anchor="middle" class="box-text">RecordingMouse (test double)</text>
+  <text x="730" y="580" text-anchor="middle" class="box-sub">records events instead of firing</text>
+  <path d="M 730 540 L 730 505" class="arrow-dashed" marker-end="url(#arrowhead-dashed)" />
+  <text x="745" y="525" class="arrow-text">tests inject</text>
+
+  <!-- Quality bar -->
+  <rect x="40" y="610" width="1120" height="60" class="lane" />
+  <text x="55" y="630" class="lane-label">04 · Quality</text>
+
+  <rect x="80" y="640" width="200" height="20" class="box-soft" />
+  <text x="180" y="654" text-anchor="middle" class="box-sub">70 tests · 91% coverage</text>
+
+  <rect x="300" y="640" width="200" height="20" class="box-soft" />
+  <text x="400" y="654" text-anchor="middle" class="box-sub">ruff lint + format</text>
+
+  <rect x="520" y="640" width="200" height="20" class="box-soft" />
+  <text x="620" y="654" text-anchor="middle" class="box-sub">CI: Python 3.10 / 3.11 / 3.12</text>
+
+  <rect x="740" y="640" width="200" height="20" class="box-soft" />
+  <text x="840" y="654" text-anchor="middle" class="box-sub">94% gesture accuracy</text>
+
+  <rect x="960" y="640" width="200" height="20" class="box-soft" />
+  <text x="1060" y="654" text-anchor="middle" class="box-sub">&lt;40ms gesture-to-click</text>
+
+  <!-- Footer -->
+  <text x="40" y="700" class="subtitle" font-family="'JetBrains Mono', monospace" font-size="10">github.com/purushotham-kamasani/Virtual-Mouse · v0.2.0</text>
+</svg>
